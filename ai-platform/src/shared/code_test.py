@@ -4,7 +4,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelBinarizer
 from wandb.lightgbm import wandb_callback
 
-def actual_execution()
+def actual_execution():
   train = pd.read_csv('gs://test-zganatra/kraggle_lgbm_data/train.csv')
   y = train.target.values
   train.drop(['id', 'target'], inplace=True, axis=1)
