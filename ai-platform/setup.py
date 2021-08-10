@@ -1,7 +1,7 @@
 from setuptools import find_packages
 from setuptools import setup
 
-REQUIRED_PACKAGES = ['wandb==0.9.7']
+REQUIRED_PACKAGES = ['wandb==0.9.7', 'lightgbm']
 
 setup(
     name='bank_model',
