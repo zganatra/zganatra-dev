@@ -5,6 +5,8 @@ import wandb
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelBinarizer
 from wandb.lightgbm import wandb_callback
+import os
+os.environ['WANDB_API_KEY'] = "c4ba628fba75a4ef20686c737a51504bc9fa0465"
 
 parameters = {
     'application': 'binary',
