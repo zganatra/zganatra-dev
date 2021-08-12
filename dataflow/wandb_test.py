@@ -4,6 +4,8 @@ import sys
 import time
 import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
+import os
+os.environ['WANDB_API_KEY'] = "c4ba628fba75a4ef20686c737a51504bc9fa0465"
 
 logging.basicConfig(
     stream=sys.stderr,
@@ -19,7 +21,7 @@ _DEFAULT_BUCKET = "gs://test-zganatra/wandb"
 _DEFAULT_SERVICE_ACCOUNT = "sa-aiplatform-dev@etsy-search-ml-dev.iam.gserviceaccount.com"
 _PROJECT_VPC="project-vpc"
 
-def beam_deploy_func(experiment):
+def beam_deploy_func():
     """Create beam job to invoke ccp
     """
 
@@ -52,38 +54,40 @@ def beam_deploy_func(experiment):
 
     param_grid = {'C': [0.001, 0.01, 0.1, 1, 5, 10, 20, 50, 100]}
 
-    clf = GridSearchCV(logreg,
-                       param_grid=param_grid,
-                       cv=10,
-                       n_jobs=-1)
-
-    clf.fit(X_train_scaled, y_train)
-
-    y_pred = clf.predict(X_test_scaled)
-
-    print("\nResults\nConfusion matrix \n {}".format(
-        confusion_matrix(y_test, y_pred)))
-
-    f1 = f1_score(y_test, y_pred)
-    precision = precision_score(y_test, y_pred)
-    recall = recall_score(y_test, y_pred)
-
     params = {"random_state": random_state,
               "model_type": "logreg",
               "scaler": "standard scaler",
               "param_grid": str(param_grid),
               "stratify": True
               }
+    wandb.init(project="dataflow-test-sklearn",save_code=True, config=params)
+    
+    clf = GridSearchCV(logreg,
+                       param_grid=param_grid,
+                       cv=10,
+                       n_jobs=-1)
+    wandb.sklearn.plot_learning_curve(clf, X_train, y_train)
+    
+    clf.fit(X_train_scaled, y_train)
+
+    y_pred = clf.predict(X_test_scaled)
+
+    #print("\nResults\nConfusion matrix \n {}".format(confusion_matrix(y_test, y_pred)))
+    wandb.sklearn.plot_confusion_matrix(y_test, y_pred, ['target'])
+   
+    
+    f1 = f1_score(y_test, y_pred)
+    precision = precision_score(y_test, y_pred)
+    recall = recall_score(y_test, y_pred)
+
     metrics = {"f1": f1,
                "recall": recall,
                "precision": precision
                }
+    wandb.log(metrics)
+    
 
-    experiment.log_dataset_hash(X_train_scaled)
-    experiment.log_parameters(params)
-    experiment.log_metrics(metrics)
-
-def dataflow_comet_fn():
+def dataflow_wandb_fn():
     """
     server trained image
     :return:
@@ -106,20 +110,11 @@ def dataflow_comet_fn():
         "setup_file": "./setup.py"
     }
     from . import beam_deploy_func
-    # Import comet_ml at the top of your file
-    from comet_ml import Experiment
-    # Create an experiment with your api key
-    experiment = Experiment(
-        api_key="Lz2ERpNFKKIaduB7WppGHLUkc",
-        project_name="ml-platform-exploration",
-        workspace="etsy-aml",
-        log_code=True
-    )
     with beam.Pipeline(options=PipelineOptions(**pipeline_args)) as pipeline:
         pipeline \
-        | 'Load experiment' >> beam.Create(experiment) \
+        | 'Load experiment' >> beam.Create() \
         | 'Train Model' >> beam.Map(lambda x: beam_deploy_func(x))
         pipeline.run().wait_until_finish()
 
 if __name__ == "__main__":
-    dataflow_comet_fn()
+    dataflow_wandb_fn()
