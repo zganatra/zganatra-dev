@@ -6,7 +6,7 @@ import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 import os
 os.environ['WANDB_API_KEY'] = "c4ba628fba75a4ef20686c737a51504bc9fa0465"
-
+import wandb
 logging.basicConfig(
     stream=sys.stderr,
     format='%(asctime)s %(levelname)-8s %(message)s',
