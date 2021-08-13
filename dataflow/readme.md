@@ -1,0 +1,11 @@
+python -m dataflow.wandb_test \
+    --job_name test-wandb \
+    --project etsy-search-ml-dev \
+    --staging_location "gs://test-zganatra/wandb/staging-test" \
+    --runner DataflowRunner \
+    --max_num_workers 10 \
+    --service_account_email dataflow-sa@etsy-search-ml-dev.iam.gserviceaccount.com \
+    --setup_file ./setup.py \
+    --save_main_session \
+    --worker_machine_type n1-standard-4 \
+    --region us-central1
