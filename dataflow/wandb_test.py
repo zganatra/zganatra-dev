@@ -109,11 +109,9 @@ def dataflow_wandb_fn():
         "save_main_session": True,
         "setup_file": "./setup.py"
     }
-    from . import beam_deploy_func
     with beam.Pipeline(options=PipelineOptions(**pipeline_args)) as pipeline:
         pipeline \
-        | 'Load experiment' >> beam.Create() \
-        | 'Train Model' >> beam.Map(lambda x: beam_deploy_func(x))
+        | 'Train Model' >> beam.Map(lambda x: beam_deploy_func())
         pipeline.run().wait_until_finish()
 
 if __name__ == "__main__":
