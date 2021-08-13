@@ -21,24 +21,20 @@ _DEFAULT_BUCKET = "gs://test-zganatra/wandb"
 _DEFAULT_SERVICE_ACCOUNT = "sa-aiplatform-dev@etsy-search-ml-dev.iam.gserviceaccount.com"
 _PROJECT_VPC="project-vpc"
 
-def beam_deploy_func():
-    """Create beam job to invoke ccp
-    """
-
-    import numpy as np
+def load_data():
     from sklearn.datasets import load_breast_cancer
-    from sklearn.model_selection import train_test_split, GridSearchCV
-    from sklearn.linear_model import LogisticRegression
+    from sklearn.model_selection import train_test_split
     from sklearn.preprocessing import StandardScaler
-    from sklearn.metrics import f1_score, precision_score, recall_score, confusion_matrix
-
-    random_state = 42
+    import numpy as np
+    
     cancer = load_breast_cancer()
     print("cancer.keys(): {}".format(cancer.keys()))
     print("Shape of cancer data: {}\n".format(cancer.data.shape))
     print("Sample counts per class:\n{}".format(
         {n: v for n, v in zip(cancer.target_names, np.bincount(cancer.target))}))
     print("\nFeature names:\n{}".format(cancer.feature_names))
+    
+    random_state = 42
 
     X_train, X_test, y_train, y_test = train_test_split(
         cancer.data,
@@ -49,6 +45,15 @@ def beam_deploy_func():
     scaler = StandardScaler()
     X_train_scaled = scaler.fit_transform(X_train)
     X_test_scaled = scaler.transform(X_test)
+    
+    return cancer
+
+def beam_deploy_func(cancer):
+
+    import numpy as np
+    from sklearn.model_selection import GridSearchCV
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.metrics import f1_score, precision_score, recall_score, confusion_matrix
 
     logreg = LogisticRegression()
 
@@ -110,7 +115,8 @@ def dataflow_wandb_fn():
         "setup_file": "./setup.py"
     }
     with beam.Pipeline(options=PipelineOptions(**pipeline_args)) as pipeline:
-        pipeline \
+       (pipeline \
+        | 'Create words' >> beam.Create(load_data())
         | 'Train Model' >> beam.Map(lambda x: beam_deploy_func())
         pipeline.run().wait_until_finish()
 
