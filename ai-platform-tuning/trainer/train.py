@@ -5,7 +5,7 @@ from sklearn.decomposition import TruncatedSVD
 from sklearn.linear_model import SGDClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
-from sklearn.externals import joblib
+import joblib
 import pandas as pd
 import hypertune
 
@@ -51,10 +51,10 @@ parser.add_argument(
 args = parser.parse_args()
 
 # Define the GCS bucket the training data is in
-bucket = storage.Client().bucket('training_jobs_bucket')
+bucket = storage.Client().bucket('test-zganatra')
 
 # Define the source blob name (aka file name) for the training data
-blob = bucket.blob('train.csv')
+blob = bucket.blob('hyperparameter_tune/train.csv')
 
 # Download the data into a file name
 blob.download_to_filename('train.csv')
