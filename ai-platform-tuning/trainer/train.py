@@ -8,6 +8,7 @@ from sklearn.metrics import accuracy_score
 import joblib
 import pandas as pd
 import hypertune
+import wandb
 import os
 os.environ['WANDB_API_KEY'] = "c4ba628fba75a4ef20686c737a51504bc9fa0465"
 
