@@ -8,6 +8,9 @@ from sklearn.metrics import accuracy_score
 import joblib
 import pandas as pd
 import hypertune
+import os
+os.environ['WANDB_API_KEY'] = "c4ba628fba75a4ef20686c737a51504bc9fa0465"
+
 
 # Create the argument parser for each parameter plus the job directory
 parser = argparse.ArgumentParser()
@@ -101,6 +104,13 @@ model = SGDClassifier(
     penalty=args.penalty
     )
 
+parameters = {
+"alpha":args.alpha,
+"max_iter":args.max_iter,
+"loss":args.loss,
+"penalty":args.penalty
+}
+
 # Fit the training data and predict the test data
 model.fit(X_train, y_train)
 y_pred = model.predict(X_test)
@@ -115,6 +125,10 @@ hpt.report_hyperparameter_tuning_metric(
     metric_value=score,
     global_step=1000
     )
+
+run = wandb.init(project="aiplatform-tuning-project", config=parameters)
+run.log({"accuracy":score})
+run.finish()
 
 # Export the model to a file. The name needs to be 'model.joblib'
 model_filename = 'model.joblib'
