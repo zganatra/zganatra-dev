@@ -127,9 +127,9 @@ hpt.report_hyperparameter_tuning_metric(
     global_step=1000
     )
 
-run = wandb.init(project="aiplatform-tuning-project-2",save_code=True, config=parameters)
-wandb.log({"accuracy":score})
-wandb.finish()
+run = wandb.init(project="aiplatform-tuning-project-3",save_code=True, config=parameters)
+with run:
+    run.log({"accuracy":score})
 
 # Export the model to a file. The name needs to be 'model.joblib'
 model_filename = 'model.joblib'
