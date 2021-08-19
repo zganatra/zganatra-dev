@@ -1,5 +1,6 @@
 import argparse
 from google.cloud import storage
+from comet_ml import Experiment
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.decomposition import TruncatedSVD
 from sklearn.linear_model import SGDClassifier
@@ -8,7 +9,7 @@ from sklearn.metrics import accuracy_score
 import joblib
 import pandas as pd
 import hypertune
-from comet_ml import Experiment
+
 experiment = Experiment(
     api_key="h3lOURJeYytbmwCGVD2mJwm8R",
     project_name="test-comet",
