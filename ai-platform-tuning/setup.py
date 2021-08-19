@@ -1,7 +1,7 @@
 from setuptools import find_packages
 from setuptools import setup
 
-REQUIRED_PACKAGES = ['scikit-learn','cloudml-hypertune','wandb==0.9.7']
+REQUIRED_PACKAGES = ['scikit-learn','cloudml-hypertune','wandb==0.9.7','comet']
 
 setup(
     name='text_class_hp_tuning',
