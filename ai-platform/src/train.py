@@ -10,12 +10,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, \
     f1_score
 import pandas as pd
-import wandb
 import os
-
-os.environ['WANDB_API_KEY'] = "c4ba628fba75a4ef20686c737a51504bc9fa0465"
-wandb.init(project="ai-platform-test-sklearn")
-
 
 STORAGE_BUCKET = 'test-zganatra/bank-additional'
 DATA_PATH = 'bank-additional-full.csv'
