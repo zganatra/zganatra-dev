@@ -12,12 +12,12 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, \
 import pandas as pd
 from comet_ml import Experiment, ExistingExperiment
 import os
+from api_key_manager import SecretManager
 
 STORAGE_BUCKET = 'test-zganatra/bank-additional'
 DATA_PATH = 'bank-additional-full.csv'
 LOCAL_PATH = '/tmp'
 PROJECT_ID = 'etsy-mlinfra-dev'
-
 
 if __name__ == '__main__':
 
@@ -59,8 +59,18 @@ if __name__ == '__main__':
         # Local path
         os.path.join(LOCAL_PATH, 'dataset.csv')
     ])
-   
-   # Read data with pandas - separator is ';'
+
+    experiment = Experiment(
+        project_name='comet-setup',
+        api_key= SecretManager.get_api_key('zganatra_comet_api', '1'),
+        log_code=True,
+        auto_metric_logging=True,
+        auto_param_logging=True,
+        log_graph=True,
+        parse_args=True,
+    )
+
+    # Read data with pandas - separator is ';'
     df = pd.read_csv(os.path.join(LOCAL_PATH, 'dataset.csv'), sep=';')
     
    # Split data between train and test
