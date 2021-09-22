@@ -1,4 +1,4 @@
-from google.cloud import secretmanager
+import google.cloud.secretmanager as secretmanager
 from googleapiclient import discovery
 from oauth2client.client import GoogleCredentials
 
@@ -48,7 +48,6 @@ class SecretManager:
         return version.name
 
     def _disable_previous_version(self):
-        //TODO
         return
 
     def update_api_key(self,secret_id, api_key):

@@ -1,7 +1,7 @@
 from setuptools import find_packages
 from setuptools import setup
 
-REQUIRED_PACKAGES = ['wandb==0.9.7', 'lightgbm']
+REQUIRED_PACKAGES = ['comet_ml','google-cloud-secret-manager','google-api-core-grpc >= 1.18.0', 'lightgbm']
 
 setup(
     name='bank_model',
