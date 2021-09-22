@@ -2,6 +2,7 @@ import argparse
 import os
 import joblib
 import subprocess
+from comet_ml import Experiment, ExistingExperiment
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
@@ -10,7 +11,6 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, \
     f1_score
 import pandas as pd
-from comet_ml import Experiment, ExistingExperiment
 import os
 from src.api_key_manager import SecretManager
 
@@ -125,7 +125,6 @@ if __name__ == '__main__':
     #Plot all classifier plots
     #wandb.sklearn.plot_classifier(pipeline, train, test, y_train, y_test, pred_train, pred_test,labels,  model_name='RandomForestClassifier', feature_names=None)
     
-    wandb.sklearn.plot_confusion_matrix(y_test, pred_train, ['test'])
     # Calculate a bunch of performance metrics
     results = pd.DataFrame(
         {'accuracy': [accuracy_score(y_train, pred_train),
