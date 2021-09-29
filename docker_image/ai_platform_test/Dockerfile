@@ -7,6 +7,9 @@ RUN apt-get install -y git
 RUN apt-get install -y pip
 RUN git clone https://github.com/zganatra/zganatra-dev.git --branch zganatra-patch-3
 RUN pip install setuptools
+RUN pip install pandas
+RUN pip install google-api-python-client
+RUN pip install oauth2client
 RUN pip install /zganatra-dev/ai-platform
 
-ENTRYPOINT ["python3", "/zganatra-dev/ai-platform/src/train.py"]
+ENTRYPOINT ["bash", "/zganatra-dev/ai-platform/run.sh"]
