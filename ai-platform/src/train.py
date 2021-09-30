@@ -11,8 +11,23 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, \
     f1_score
 import pandas as pd
-import os
 from src.api_key_manager import SecretManager
+
+//Logging for debugging by comet
+os.environ["COMET_LOGGING_CONSOLE"] = "INFO"
+import comet_ml.git_logging
+
+cwd = os.getcwd()
+print("Running and looking for a Git Repository from %s" % cwd)
+repo = comet_ml.git_logging.find_git_repo(cwd)
+if not repo:
+    raise Exception("Didn't find any repository in %s or any parent directory" % cwd)
+print("Found repo at", repo)
+metadata = comet_ml.git_logging.get_git_metadata(cwd)
+if not metadata:
+    raise Exception("This shouldn't happens")
+print("Metadata", metadata)
+//Logging ends
 
 STORAGE_BUCKET = 'test-zganatra/bank-additional'
 DATA_PATH = 'bank-additional-full.csv'
