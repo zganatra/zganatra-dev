@@ -1,7 +1,7 @@
 #! /usr/bin/bash
 
 export COMET_LOGGING_FILE=/tmp/comet.log
-export COMET_LOGGING_FILE_LEVEL=debug
+export COMET_LOGGING_FILE_LEVEL=info
 
 python3 /zganatra-dev/ai-platform/src/train.py \
 --n-estimators=500 \
