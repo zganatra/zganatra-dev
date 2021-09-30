@@ -13,7 +13,7 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, \
 import pandas as pd
 from src.api_key_manager import SecretManager
 
-//Logging for debugging by comet
+#Logging for debugging by comet
 os.environ["COMET_LOGGING_CONSOLE"] = "INFO"
 import comet_ml.git_logging
 
@@ -27,7 +27,7 @@ metadata = comet_ml.git_logging.get_git_metadata(cwd)
 if not metadata:
     raise Exception("This shouldn't happens")
 print("Metadata", metadata)
-//Logging ends
+#Logging ends
 
 STORAGE_BUCKET = 'test-zganatra/bank-additional'
 DATA_PATH = 'bank-additional-full.csv'
