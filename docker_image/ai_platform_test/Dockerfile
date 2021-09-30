@@ -12,4 +12,6 @@ RUN pip install google-api-python-client
 RUN pip install oauth2client
 RUN pip install /zganatra-dev/ai-platform
 
-ENTRYPOINT ["bash", "/zganatra-dev/ai-platform/run.sh"]
+WORKDIR /zganatra-dev
+
+ENTRYPOINT ["python3", "ai-platform/src/train.py"]
