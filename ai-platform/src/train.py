@@ -2,6 +2,7 @@ import argparse
 import os
 import joblib
 import subprocess
+from comet_ml import Experiment, ExistingExperiment
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
@@ -10,18 +11,28 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, \
     f1_score
 import pandas as pd
-import wandb
-import os
+from src.api_key_manager import SecretManager
 
-os.environ['WANDB_API_KEY'] = "c4ba628fba75a4ef20686c737a51504bc9fa0465"
-wandb.init(project="ai-platform-test-sklearn")
+#Logging for debugging by comet
+os.environ["COMET_LOGGING_CONSOLE"] = "INFO"
+import comet_ml.git_logging
 
+cwd = os.getcwd()
+print("Running and looking for a Git Repository from %s" % cwd)
+repo = comet_ml.git_logging.find_git_repo(cwd)
+if not repo:
+    raise Exception("Didn't find any repository in %s or any parent directory" % cwd)
+print("Found repo at", repo)
+metadata = comet_ml.git_logging.get_git_metadata(cwd)
+if not metadata:
+    raise Exception("This shouldn't happens")
+print("Metadata", metadata)
+#Logging ends
 
 STORAGE_BUCKET = 'test-zganatra/bank-additional'
 DATA_PATH = 'bank-additional-full.csv'
 LOCAL_PATH = '/tmp'
 PROJECT_ID = 'etsy-mlinfra-dev'
-
 
 if __name__ == '__main__':
 
@@ -63,8 +74,17 @@ if __name__ == '__main__':
         # Local path
         os.path.join(LOCAL_PATH, 'dataset.csv')
     ])
-   
-   # Read data with pandas - separator is ';'
+    experiment = Experiment(
+        project_name='comet-setup',
+        api_key= SecretManager('etsy-mlinfrasb-sandbox').get_api_key('zganatra_comet_api', '1'),
+        log_code=True,
+        auto_metric_logging=True,
+        auto_param_logging=True,
+        log_graph=True,
+        parse_args=True,
+    )
+
+    # Read data with pandas - separator is ';'
     df = pd.read_csv(os.path.join(LOCAL_PATH, 'dataset.csv'), sep=';')
     
    # Split data between train and test
@@ -120,7 +140,6 @@ if __name__ == '__main__':
     #Plot all classifier plots
     #wandb.sklearn.plot_classifier(pipeline, train, test, y_train, y_test, pred_train, pred_test,labels,  model_name='RandomForestClassifier', feature_names=None)
     
-    wandb.sklearn.plot_confusion_matrix(y_test, pred_train, ['test'])
     # Calculate a bunch of performance metrics
     results = pd.DataFrame(
         {'accuracy': [accuracy_score(y_train, pred_train),
